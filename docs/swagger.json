@@ -1,0 +1,116 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a todo sample server.",
+        "title": "Hexagonal arquitecture rest API",
+        "contact": {
+            "name": "API Support",
+            "email": "kaitsubaka@gmail.com"
+        },
+        "license": {
+            "name": "MIT"
+        },
+        "version": "1.0"
+    },
+    "basePath": "/api",
+    "paths": {
+        "/todos": {
+            "post": {
+                "description": "get string by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get Todo detail by ID",
+                "parameters": [
+                    {
+                        "description": "Create order",
+                        "name": "todo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_kaitsubaka_hexagonal-architecture-go_pkg_pubdtos.CreateTodoRequestDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_kaitsubaka_hexagonal-architecture-go_pkg_pubdtos.CreateTodoResponseDTO"
+                        }
+                    }
+                }
+            }
+        },
+        "/todos/{id}": {
+            "get": {
+                "description": "get string by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get Todo detail by ID",
+                "operationId": "get-todo-detail-by-todoid",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Todo ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_kaitsubaka_hexagonal-architecture-go_pkg_pubdtos.GetTodoByIDResponseDTO"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "github_com_kaitsubaka_hexagonal-architecture-go_pkg_pubdtos.CreateTodoRequestDTO": {
+            "type": "object",
+            "properties": {
+                "note": {
+                    "type": "string",
+                    "example": "name_example"
+                }
+            }
+        },
+        "github_com_kaitsubaka_hexagonal-architecture-go_pkg_pubdtos.CreateTodoResponseDTO": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                },
+                "note": {
+                    "type": "string",
+                    "example": "name_example"
+                }
+            }
+        },
+        "github_com_kaitsubaka_hexagonal-architecture-go_pkg_pubdtos.GetTodoByIDResponseDTO": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                },
+                "note": {
+                    "type": "string",
+                    "example": "name_example"
+                }
+            }
+        }
+    }
+}
