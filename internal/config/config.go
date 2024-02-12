@@ -1,13 +1,11 @@
 package config
 
 import (
-	"context"
 	"errors"
 	"log"
 	"reflect"
 	"strings"
 
-	"github.com/kaitsubaka/hexagonal-architecture-go/internal/platform/context/base"
 	"github.com/spf13/viper"
 )
 
@@ -29,24 +27,38 @@ type App struct {
 	Port string `mapstructure:"APP_PORT"`
 }
 
-func New(c context.Context) (*Configuration, error) {
-	if key, ok := c.Value(base.CtxEnvKey).(string); ok && key == "local" {
+type Config struct {
+	env string
+}
+
+func WithEnv(env string) func(*Config) {
+	return func(c *Config) {
+		c.env = env
+	}
+}
+
+func Load(opts ...func(*Config)) (*Configuration, error) {
+	cfg := new(Config)
+	for _, opt := range opts {
+		opt(cfg)
+	}
+	if cfg.env == "local" {
 		viper.SetConfigFile(".env")
 		err := viper.ReadInConfig()
 		if err != nil {
 			return nil, err
 		}
 	}
-	cfg := new(Configuration)
+	c := new(Configuration)
 	// try load settings from env vars
-	if err := bindEnv(cfg); err != nil {
+	if err := bindEnv(c); err != nil {
 		return nil, err
 	}
-	if err := viper.Unmarshal(cfg); err != nil {
+	if err := viper.Unmarshal(c); err != nil {
 		return nil, err
 	}
 	log.Println(cfg)
-	return cfg, nil
+	return c, nil
 }
 
 func (c *Configuration) IsLowEnv() bool {
