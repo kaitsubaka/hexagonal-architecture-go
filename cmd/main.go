@@ -11,7 +11,7 @@ import (
 	"github.com/kaitsubaka/hexagonal-architecture-go/internal/app/rest"
 	"github.com/kaitsubaka/hexagonal-architecture-go/internal/common"
 	"github.com/kaitsubaka/hexagonal-architecture-go/internal/config"
-	todosvc "github.com/kaitsubaka/hexagonal-architecture-go/internal/core/services/todo"
+	"github.com/kaitsubaka/hexagonal-architecture-go/internal/core/services"
 	"github.com/kaitsubaka/hexagonal-architecture-go/internal/infra/adapters/driven/repository"
 	"github.com/kaitsubaka/hexagonal-architecture-go/internal/infra/adapters/driving/rest/controllers"
 	"github.com/kaitsubaka/hexagonal-architecture-go/internal/infra/adapters/driving/rest/routes"
@@ -61,7 +61,7 @@ func main() {
 		WithGroup("/todos",
 			routes.TodoRoutes(
 				controllers.NewTodoController(
-					todosvc.NewTodoService(
+					services.NewTodoService(
 						repository.NewTodoRepository(psqlDB, "todos"),
 					),
 				),
