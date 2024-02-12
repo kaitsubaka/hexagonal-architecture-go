@@ -1,0 +1,77 @@
+basePath: /api
+definitions:
+  github_com_kaitsubaka_hexagonal-architecture-go_pkg_pubdtos.CreateTodoRequestDTO:
+    properties:
+      note:
+        example: name_example
+        type: string
+    type: object
+  github_com_kaitsubaka_hexagonal-architecture-go_pkg_pubdtos.CreateTodoResponseDTO:
+    properties:
+      id:
+        example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+      note:
+        example: name_example
+        type: string
+    type: object
+  github_com_kaitsubaka_hexagonal-architecture-go_pkg_pubdtos.GetTodoByIDResponseDTO:
+    properties:
+      id:
+        example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+      note:
+        example: name_example
+        type: string
+    type: object
+info:
+  contact:
+    email: kaitsubaka@gmail.com
+    name: API Support
+  description: This is a todo sample server.
+  license:
+    name: MIT
+  title: Hexagonal arquitecture rest API
+  version: "1.0"
+paths:
+  /todos:
+    post:
+      consumes:
+      - application/json
+      description: get string by ID
+      parameters:
+      - description: Create order
+        in: body
+        name: todo
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_kaitsubaka_hexagonal-architecture-go_pkg_pubdtos.CreateTodoRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_kaitsubaka_hexagonal-architecture-go_pkg_pubdtos.CreateTodoResponseDTO'
+      summary: Get Todo detail by ID
+  /todos/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get string by ID
+      operationId: get-todo-detail-by-todoid
+      parameters:
+      - description: Todo ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_kaitsubaka_hexagonal-architecture-go_pkg_pubdtos.GetTodoByIDResponseDTO'
+      summary: Get Todo detail by ID
+swagger: "2.0"
