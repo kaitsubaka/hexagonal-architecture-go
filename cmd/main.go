@@ -1,17 +1,19 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
 
 	_ "github.com/kaitsubaka/hexagonal-architecture-go/docs"
 	"github.com/kaitsubaka/hexagonal-architecture-go/internal/app/rest"
+	"github.com/kaitsubaka/hexagonal-architecture-go/internal/config"
 	todosvc "github.com/kaitsubaka/hexagonal-architecture-go/internal/core/services/todo"
 	"github.com/kaitsubaka/hexagonal-architecture-go/internal/infra/adapters/driven/repository"
 	"github.com/kaitsubaka/hexagonal-architecture-go/internal/infra/adapters/driving/rest/controllers"
 	"github.com/kaitsubaka/hexagonal-architecture-go/internal/infra/adapters/driving/rest/routes"
-	"github.com/kaitsubaka/hexagonal-architecture-go/internal/infra/config"
-	"github.com/kaitsubaka/hexagonal-architecture-go/internal/platform/context/base"
 	"github.com/kaitsubaka/hexagonal-architecture-go/internal/platform/database"
 )
 
@@ -29,12 +31,16 @@ import (
 
 // @BasePath /api
 func main() {
-	baseContext, stop := base.New()
-	defer stop()
-	cfg, err := config.New(baseContext)
+	cfg, err := config.Load(config.WithEnv(
+		os.Getenv("APP_ENV"),
+	))
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	baseContext, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
+
 	psqlDBClient, err := database.NewPsqlDB(&database.PsqlDBConfig{
 		Host:     cfg.Postgres.Host,
 		Password: cfg.Postgres.Password,
@@ -46,25 +52,38 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	restApp, err := rest.
 		NewAppBuilder(cfg).
 		WithContext(baseContext).
-		WithGroup("/todos", routes.TodoRoutes(controllers.NewTodoController(todosvc.NewTodoService(repository.NewTodoRepository(psqlDBClient, "todos"))))).
+		WithGroup("/todos",
+			routes.TodoRoutes(
+				controllers.NewTodoController(
+					todosvc.NewTodoService(
+						repository.NewTodoRepository(psqlDBClient, "todos"),
+					),
+				),
+			)).
 		Build()
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	go func() {
 		if err := restApp.Start(); err != nil && err != http.ErrServerClosed {
 			log.Fatal("shutting down the server")
 		}
 	}()
+
 	log.Println("Press CTRL+C to exit...")
+
 	<-baseContext.Done()
+
 	// graceful shutdown
 	if err := restApp.Shutdown(); err != nil {
 		log.Fatal(err)
 	}
+
 	if err := psqlDBClient.Close(); err != nil {
 		log.Fatal(err)
 	}

@@ -34,6 +34,8 @@ To use this template:
 - [ ] Add soft delete and update methods
 - [ ] Add migrations with bun
 - [ ] Add documentation
+- [ ] Add linters
+- [ ] Add unit tests
 
 ### Contribution
 

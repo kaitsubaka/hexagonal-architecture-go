@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/kaitsubaka/hexagonal-architecture-go/internal/config"
 	"github.com/kaitsubaka/hexagonal-architecture-go/internal/infra/adapters/driving/rest/routes"
-	"github.com/kaitsubaka/hexagonal-architecture-go/internal/infra/config"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"
