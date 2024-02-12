@@ -51,7 +51,7 @@ func New(c context.Context) (*Configuration, error) {
 
 func (c *Configuration) IsLowEnv() bool {
 	switch c.App.Env {
-	case "local", "develpment":
+	case "local", "development":
 		return true
 	default:
 		return false

@@ -4,7 +4,7 @@ run-local:
 
 .PHONY: run-docker-local
 run-docker-dev:
-	docker-compose -f ./scripts/docker/local/docker-compose.yml up --build  --remove-orphans
+	docker-compose -f ./scripts/docker/docker-compose.yml up --build  --remove-orphans
 
 .PHONY: run-docker-local
 run-requirements-local:

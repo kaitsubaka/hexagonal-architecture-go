@@ -1,8 +1,8 @@
 version: '3.8'
 services:
-  postgres_db_local:
+  postgres_db_hexarq:
     image: postgres:latest
-    container_name: HexArq-DB
+    container_name: HexArq-DB-dev
     restart: always
     environment:
       - POSTGRES_USER=postgres
@@ -13,9 +13,9 @@ services:
     healthcheck:
       test: pg_isready -U postgres
 
-  app_local:
+  application_hexarq:
     environment:
-      - POSTGRES_HOST=postgres_db_local
+      - POSTGRES_HOST=postgres_db_hexarq
       - APP_ENV=development
       - APP_PORT=3003
       - POSTGRES_USER=postgres
@@ -23,12 +23,12 @@ services:
       - POSTGRES_DBNAME=todo_db
       - POSTGRES_PORT=5432
     build:
-      context: ../../../
+      context: ../../
       dockerfile: ./scripts/docker/local/Dockerfile
-    container_name: HexArq-App
+    container_name: HexArq-App-dev
     restart: always
     ports:
       - 3003:3003
     depends_on:
-      postgres_db_local:
+      postgres_db_hexarq:
                   condition: service_healthy
