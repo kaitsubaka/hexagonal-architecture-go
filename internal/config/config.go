@@ -2,7 +2,6 @@ package config
 
 import (
 	"errors"
-	"log"
 	"reflect"
 	"strings"
 
@@ -57,7 +56,6 @@ func Load(opts ...func(*Config)) (*Configuration, error) {
 	if err := viper.Unmarshal(c); err != nil {
 		return nil, err
 	}
-	log.Println(cfg)
 	return c, nil
 }
 

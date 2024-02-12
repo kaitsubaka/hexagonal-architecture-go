@@ -9,6 +9,7 @@ import (
 
 	_ "github.com/kaitsubaka/hexagonal-architecture-go/docs"
 	"github.com/kaitsubaka/hexagonal-architecture-go/internal/app/rest"
+	"github.com/kaitsubaka/hexagonal-architecture-go/internal/common"
 	"github.com/kaitsubaka/hexagonal-architecture-go/internal/config"
 	todosvc "github.com/kaitsubaka/hexagonal-architecture-go/internal/core/services/todo"
 	"github.com/kaitsubaka/hexagonal-architecture-go/internal/infra/adapters/driven/repository"
@@ -23,7 +24,7 @@ import (
 
 // @description This is a todo sample server.
 
-// @contact.name API Support
+// @contact.name Alex Paz
 
 // @contact.email kaitsubaka@gmail.com
 
@@ -31,23 +32,24 @@ import (
 
 // @BasePath /api
 func main() {
-	cfg, err := config.Load(config.WithEnv(
-		os.Getenv("APP_ENV"),
-	))
+	cfg, err := config.Load(config.WithEnv(os.Getenv(common.AppEnvEnvar)))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	baseContext, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	ctx, stop := signal.NotifyContext(
+		context.Background(),
+		os.Interrupt,
+	)
 	defer stop()
 
-	psqlDBClient, err := database.NewPsqlDB(&database.PsqlDBConfig{
+	psqlDB, err := database.NewPsqlDB(&database.PsqlDBConfig{
 		Host:     cfg.Postgres.Host,
 		Password: cfg.Postgres.Password,
 		User:     cfg.Postgres.User,
 		DBName:   cfg.Postgres.DBName,
 		Port:     cfg.Postgres.Port,
-		Ctx:      baseContext,
+		Ctx:      ctx,
 	})
 	if err != nil {
 		log.Fatal(err)
@@ -55,12 +57,12 @@ func main() {
 
 	restApp, err := rest.
 		NewAppBuilder(cfg).
-		WithContext(baseContext).
+		WithContext(ctx).
 		WithGroup("/todos",
 			routes.TodoRoutes(
 				controllers.NewTodoController(
 					todosvc.NewTodoService(
-						repository.NewTodoRepository(psqlDBClient, "todos"),
+						repository.NewTodoRepository(psqlDB, "todos"),
 					),
 				),
 			)).
@@ -77,14 +79,14 @@ func main() {
 
 	log.Println("Press CTRL+C to exit...")
 
-	<-baseContext.Done()
+	<-ctx.Done()
 
 	// graceful shutdown
 	if err := restApp.Shutdown(); err != nil {
 		log.Fatal(err)
 	}
 
-	if err := psqlDBClient.Close(); err != nil {
+	if err := psqlDB.Close(); err != nil {
 		log.Fatal(err)
 	}
 }
