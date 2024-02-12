@@ -10,7 +10,7 @@ import (
 	"github.com/kaitsubaka/hexagonal-architecture-go/internal/config"
 	"github.com/kaitsubaka/hexagonal-architecture-go/internal/platform/database"
 	migratecli "github.com/kaitsubaka/hexagonal-architecture-go/internal/platform/database/migrate"
-	"github.com/kaitsubaka/hexagonal-architecture-go/migrations"
+	"github.com/kaitsubaka/hexagonal-architecture-go/scripts/database/migrations"
 	"github.com/uptrace/bun/migrate"
 )
 
