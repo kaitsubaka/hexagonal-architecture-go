@@ -4,7 +4,7 @@
         "description": "This is a todo sample server.",
         "title": "Hexagonal arquitecture rest API",
         "contact": {
-            "name": "API Support",
+            "name": "Alex Paz",
             "email": "kaitsubaka@gmail.com"
         },
         "license": {
